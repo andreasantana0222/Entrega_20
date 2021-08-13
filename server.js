@@ -16,13 +16,16 @@ const chat = require('./api/chat');
 // Inicializamos la librería handlebars
 const handlebars = require('express-handlebars');
 
-
+const mongoose=require('mongoose')
 
 // creo una app de tipo express
 //const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+//conexion mongoose
+mongoose.connect("mongodb://localhost:27017/mensaje", { useNewUrlParser: true, useUnifiedTopology: true })
+//mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
 //establecemos la configuración de handlebars
@@ -74,21 +77,21 @@ const server = http.listen(PORT, () => {
 ];*/
 // SOCKET
 // cuando se realice la conexion, se ejecutara una sola vez
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
     console.log("Usuario conectado");
-    socket.emit('actualizar', productos.read());
+    socket.emit('actualizar', await productos.read());
     //socket.emit('messages', messages);
-    socket.emit('messages', chat.read());
+    socket.emit('messages', await chat.read());
 
-    socket.on('guardar', (data) => {
-        productos.save(data);
-        console.log(productos.read());
-        io.sockets.emit('actualizar', productos.read());
+    socket.on('guardar',async  (data) => {
+        await productos.save(data);
+        
+        io.sockets.emit('actualizar', await productos.read());
     });
-    socket.on('new-message',function(data){
-      chat.save(data);
-      console.log(chat.read());
-      io.sockets.emit('messages', chat.read());
+    socket.on('new-message',async function(data){
+      await chat.save(data);
+      
+      io.sockets.emit('messages', await chat.read());
     });
 });
 

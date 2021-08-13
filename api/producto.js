@@ -7,30 +7,24 @@ class Productos {
   constructor() {
     // incializar variables
     this.listaProductos = [{}];
-    // conexion a la base de datos
-    async () =>
-      await mongoose.connect(config.MONGO_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-    console.log("conexion a la base de datos realizada!");
+    
   }
 
    //TO DO 
-  read() {
+  async read() {
     /* buscar todos los producto */
     console.log("\nbuscar todos los producto");
-    async () => {
+    
       let contenido = await producto.find({});
       return contenido;
-    };
-    //console.log(contenido);
+    
+    console.log(contenido);
   }
 
-  save(objeto) {
+  async save(objeto) {
     /* crear un nuevo producto */
     console.log("\ncrear un nuevo producto");
-    const productos = this.read();
+    const productos = await this.read();
 
     let id = productos.length + 1;
     let item = {
@@ -40,15 +34,15 @@ class Productos {
       id: id,
     };
 
-    let usuarioGuardado = async () => await producto.create(item);
+    let usuarioGuardado =  await producto.create(item);
     console.log(usuarioGuardado);
     return item;
   }
 
-  update(id, objeto) {
+  async update(id, objeto) {
     /* buscar un solo usuario */
     console.log("\nbuscar un solo usuario");
-    let result = async () => await producto.findOne({ id: id });
+    let result =  await producto.findOne({ id: id });
     console.log(result);
 
     /* actualizar un usuario */
@@ -63,14 +57,14 @@ class Productos {
     result = item;
 
     //TO DO 
-    let usuarioGuardado = async () => await result.save();
+    let usuarioGuardado =  await result.save();
     // usuario.updateOne({nombre: 'Emanuel'}, { $set: {password: 8787878}});
     console.log(usuarioGuardado);
     return item;
   }
 
-  delete(id) {
-    let result = async () => await producto.findOne({ id: id });
+  async delete(id) {
+    let result =  await producto.findOne({ id: id });
 
     async () => await producto.deleteOne({ id: id });
     return result;
